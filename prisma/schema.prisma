@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  items         Item[]
+  sentMessages     Message[]  @relation("SentMessages")
+  receivedMessages Message[]  @relation("ReceivedMessages")
+  threadParticipant1 MessageThread[] @relation("ThreadParticipant1")
+  threadParticipant2 MessageThread[] @relation("ThreadParticipant2")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Item {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  category    String
+  type        String   // "lost" or "found"
+  location    String?
+  date        String?
+  imageUrl    String?
+  status      String   @default("active") // "active" or "resolved"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  threads     MessageThread[]
+}
+
+model MessageThread {
+  id            String   @id @default(cuid())
+  participant1Id String
+  participant2Id String
+  itemId        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  participant1  User     @relation("ThreadParticipant1", fields: [participant1Id], references: [id])
+  participant2  User     @relation("ThreadParticipant2", fields: [participant2Id], references: [id])
+  item          Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  messages      Message[]
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  content     String   @db.Text
+  senderId    String
+  receiverId  String
+  threadId    String
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver    User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  thread      MessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+}

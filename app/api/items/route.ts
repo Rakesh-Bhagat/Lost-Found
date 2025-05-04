@@ -116,7 +116,7 @@ export async function POST(req: Request) {
     console.log(item);
     console.log(existingItems)
 
-    const response = await fetch("http://localhost:8000/match", {
+    const response = await fetch("https://ml-matching-api.onrender.com/match", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -170,6 +170,6 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { message: "Error creating item" },
       { status: 500 }
-    );
+    );                     
   }
 }

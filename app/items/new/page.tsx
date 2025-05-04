@@ -25,7 +25,7 @@ const formSchema = z.object({
   type: z.enum(["lost", "found"], { required_error: "Please select item type" }),
   location: z.string().optional(),
   date: z.string().optional(),
-  image: z.instanceof(FileList).optional(),
+  image: z.any().optional(),
 })
 
 export default function NewItemPage() {

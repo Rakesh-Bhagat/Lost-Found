@@ -144,17 +144,47 @@ export async function POST(req: Request) {
       await transporter.sendMail({
         from: `"Lost & Found" <${process.env.EMAIL_USER}>`,
         to: session.user.email!,
-        subject: "We Found a Possible Match!",
-        html: `Your item matches with: <b>${matched.title}</b><br>
-               <a href="${siteUrl}/items/${matched.id}">View matched item</a>`,
+        subject: "We Found a Possible Match for Your Lost Item!",
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 10px;">
+            <h2 style="color: #333;">🎉 We Found a Possible Match!</h2>
+            <p>Your reported item matches with the following:</p>
+            
+            <h3>${matched.title}</h3>
+            <p>${matched.description}</p>
+            ${matched.imageUrl ? `<img src="${matched.imageUrl}" alt="Item image" style="max-width: 200px; height: auto; border-radius: 5px; margin-top: 10px;">` : ''}
+            
+            <p><b>Location:</b> ${matched.location}</p>
+            <p><b>Date Reported:</b> ${new Date(matched.createdAt).toLocaleDateString()}</p>
+      
+            <a href="${siteUrl}/items/${matched.id}" style="display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+              View Matched Item
+            </a>
+          </div>
+        `,
       })
-    
+      
       await transporter.sendMail({
         from: `"Lost & Found" <${process.env.EMAIL_USER}>`,
         to: matched.email,
-        subject: "We Found a Possible Match!",
-        html: `Your item matches with: <b>${item.title}</b><br>
-               <a href="${siteUrl}/item/${item.id}">View matched item</a>`,
+        subject: "We Found a Possible Match for Your Found Item!",
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 10px;">
+            <h2 style="color: #333;">🎉 We Found a Possible Match!</h2>
+            <p>Your reported item matches with the following:</p>
+            
+            <h3>${item.title}</h3>
+            <p>${item.description}</p>
+            ${item.imageUrl ? `<img src="${item.imageUrl}" alt="Item image" style="max-width: 200px; height: auto; border-radius: 5px; margin-top: 10px;">` : ''}
+            
+            <p><b>Location:</b> ${item.location}</p>
+            <p><b>Date Reported:</b> ${new Date(item.createdAt).toLocaleDateString()}</p>
+      
+            <a href="${siteUrl}/items/${item.id}" style="display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+              View Matched Item
+            </a>
+          </div>
+        `,
       })
     }
         

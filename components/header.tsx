@@ -60,7 +60,7 @@ export default function Header() {
             </SheetContent>
           </Sheet>
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <span className="font-bold text-xl hidden sm:inline-block">Campus Lost & Found</span>
+            <span className="font-bold text-xl hidden sm:inline-block">GGV Lost & Found</span>
             <span className="font-bold text-xl sm:hidden">Campus L&F</span>
           </Link>
         </div>
@@ -112,13 +112,13 @@ export default function Header() {
                       )}
                     </div>
                   </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
+                  {/* <DropdownMenuSeparator /> */}
+                  {/* <DropdownMenuItem asChild>
                     <Link href="/profile">Profile</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  </DropdownMenuItem> */}
+                  {/* <DropdownMenuItem asChild>
                     <Link href="/settings">Settings</Link>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="cursor-pointer"

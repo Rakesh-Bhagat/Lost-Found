@@ -10,7 +10,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   try {
     const item = await prisma.item.findUnique({
       where: {
-        id: params.id,
+        id: await params.id,
       },
       include: {
         user: {
@@ -98,7 +98,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     // Check if item exists and belongs to the user
     const item = await prisma.item.findUnique({
       where: {
-        id: params.id,
+        id: await params.id,
       },
     })
 
@@ -113,7 +113,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     // Delete item
     await prisma.item.delete({
       where: {
-        id: params.id,
+        id: await params.id,
       },
     })
 

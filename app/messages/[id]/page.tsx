@@ -48,7 +48,9 @@ export default function MessageThreadPage({ params }: { params: { id: string } }
       if (status === "authenticated") {
         try {
           const response = await fetch(`/api/messages/threads/${params.id}`)
+          console.log(response)
           if (!response.ok) {
+            console.log("failed")
             throw new Error("Thread not found")
           }
           const data = await response.json()

@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 
 export default function NewMessagePage() {
   const searchParams = useSearchParams();
-  const router = useRouter(); // This will work now
+  const router = useRouter(); 
   const itemId = searchParams.get("itemId");
   const [item, setItem] = useState(null);
 
@@ -44,10 +44,13 @@ export default function NewMessagePage() {
           receiverId: item.userId,
         }),
       });
-
+      const data = await res.json();
+      console.log(data);
       if (res.ok) {
         setSuccess(true);
         setMessage("");
+        console.log(data);
+        router.push(`/messages/${data.id}`)
       } else {
         alert("Failed to send message.");
       }

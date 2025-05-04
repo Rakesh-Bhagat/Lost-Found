@@ -62,8 +62,8 @@ export default function Home() {
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-3xl font-bold text-center mb-12">Created By</h2>
           <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-            <CreatorCard name="Rakesh Bhagat" role="ECE 6th Semester" image="/rakesh.jpg" />
             <CreatorCard name="Tanisha Bhushan" role="ECE 6th Semester" image="/tanisha.jpg" />
+            <CreatorCard name="Rakesh Bhagat" role="ECE 6th Semester" image="/rakesh.jpg" />
           </div>
         </div>
       </section>

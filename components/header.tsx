@@ -80,12 +80,12 @@ export default function Header() {
         <div className="flex items-center gap-2">
           {session ? (
             <>
-              <Button variant="ghost" size="icon" asChild>
+              {/* <Button variant="ghost" size="icon" asChild>
                 <Link href="/notifications">
                   <Bell className="h-5 w-5" />
                   <span className="sr-only">Notifications</span>
                 </Link>
-              </Button>
+              </Button> */}
               <Button variant="ghost" size="icon" asChild>
                 <Link href="/messages">
                   <MessageSquare className="h-5 w-5" />

@@ -9,9 +9,9 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Campus Lost & Found",
+  title: "GGV Lost & Found",
   description: "Find your lost items or report found items on campus",
-    generator: 'v0.dev'
+    generator: 'Rakesh Bhagat'
 }
 
 export default function RootLayout({

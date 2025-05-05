@@ -9,12 +9,12 @@ export default function Home() {
       {/* Hero Section with University Image Background */}
       <section className="relative py-20 px-4">
         <div className="absolute inset-0 z-0">
-          <img src="/university-entrance.jpg" alt="University Entrance" className="w-full h-full object-cover" />
+          <img src="/gate.png" alt="University Entrance" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
         <div className="container mx-auto max-w-6xl relative z-10">
           <div className="flex flex-col items-center text-center gap-6 max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">Campus Lost & Found</h1>
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">GGV Lost & Found</h1>
             <p className="text-xl text-white/80">
               The easiest way to find your lost items or report found items on campus. Connect with the community and
               help each other out.

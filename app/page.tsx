@@ -9,7 +9,7 @@ export default function Home() {
       {/* Hero Section with University Image Background */}
       <section className="relative py-20 px-4">
         <div className="absolute inset-0 z-0">
-          <img src="/gate.png" alt="University Entrance" className="w-full h-full object-cover" />
+          <img src="/gate2.png" alt="University Entrance" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
         <div className="container mx-auto max-w-6xl relative z-10">

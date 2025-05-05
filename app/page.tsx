@@ -71,7 +71,7 @@ export default function Home() {
                 linkedin: "https://www.linkedin.com/in/tanisha-bhushan-038450254/",
                 twitter: "https://twitter.com/",
                 instagram: "https://www.instagram.com/tanisha_bhushan/",
-                github: "https://github.com/",
+                github: "hhttps://github.com/BhushanTanisha",
               }}
             />
             <CreatorCard

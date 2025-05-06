@@ -25,7 +25,7 @@ export default function Home() {
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild className="text-white bg-white/10 border-white hover:bg-white">
+              <Button variant="outline" size="lg" asChild className="text-white bg-white/10 border-white hover:bg-white hover:text-black">
                 <Link href="/items">Browse Items</Link>
               </Button>
             </div>

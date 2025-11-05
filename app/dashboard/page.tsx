@@ -62,10 +62,11 @@ export default function Dashboard() {
     )
   }
 
+ 
   const lostItems = items.filter((item) => item.type === "lost")
   const foundItems = items.filter((item) => item.type === "found")
   const resolvedItems = items.filter((item) => item.status === "resolved")
-
+  
   return (
     <div className="container max-w-7xl mx-auto py-10 px-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">

@@ -4,8 +4,8 @@ import { PrismaClient } from "@prisma/client";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { z } from "zod";
 import { pusherServer } from "@/lib/pusher";
-import { transporter } from "@/lib/email"
-
+import { transporter } from "@/lib/email";
+import { log } from "console";
 
 const prisma = new PrismaClient();
 
@@ -106,6 +106,9 @@ export async function POST(req: Request) {
         title: true,
         description: true,
         userId: true,
+        imageUrl: true,
+        location: true,
+        createdAt: true,
         user: {
           select: {
             email: true,
@@ -114,7 +117,7 @@ export async function POST(req: Request) {
       },
     });
     console.log(item);
-    console.log(existingItems)
+    // console.log(existingItems);
 
     const response = await fetch("https://ml-matching-api.onrender.com/match", {
       method: "POST",
@@ -126,25 +129,25 @@ export async function POST(req: Request) {
           description: item.description,
           email: session.user.email,
         },
-        existing_items: existingItems.map(i => ({
+        existing_items: existingItems.map((i) => ({
           id: i.id,
           title: i.title,
           description: i.description,
           email: i.user.email,
         })),
       }),
-    })
-    
-    const matchResult = await response.json()
-    console.log(matchResult)
+    });
+
+    const matchResult = await response.json();
+    // console.log(matchResult);
     if (matchResult.match_found) {
-      const matched = matchResult.matched_item
-      const siteUrl = process.env.SITE_URL || "http://localhost:3000"
-    
+      const matched = matchResult.matched_item;
+      const siteUrl = process.env.SITE_URL || "http://localhost:3000";
+
       await transporter.sendMail({
         from: `"Lost & Found" <${process.env.EMAIL_USER}>`,
         to: session.user.email!,
-        subject: "We Found a Possible Match for Your Lost Item!",
+        subject: "We Found a Possible Text based Match for Your Lost Item!",
         html: `
           <div style="font-family: Arial, sans-serif; padding: 10px;">
             <h2 style="color: #333;">🎉 We Found a Possible Match!</h2>
@@ -152,22 +155,30 @@ export async function POST(req: Request) {
             
             <h3>${matched.title}</h3>
             <p>${matched.description}</p>
-            ${matched.imageUrl ? `<img src="${matched.imageUrl}" alt="Item image" style="max-width: 200px; height: auto; border-radius: 5px; margin-top: 10px;">` : ''}
+            ${
+              matched.imageUrl
+                ? `<img src="${matched.imageUrl}" alt="Item image" style="max-width: 200px; height: auto; border-radius: 5px; margin-top: 10px;">`
+                : ""
+            }
             
             <p><b>Location:</b> ${matched.location}</p>
-            <p><b>Date Reported:</b> ${new Date(matched.createdAt).toLocaleDateString()}</p>
+            <p><b>Date Reported:</b> ${new Date(
+              matched.createdAt
+            ).toLocaleDateString()}</p>
       
-            <a href="${siteUrl}/items/${matched.id}" style="display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+            <a href="${siteUrl}/items/${
+          matched.id
+        }" style="display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
               View Matched Item
             </a>
           </div>
         `,
-      })
-      
+      });
+
       await transporter.sendMail({
         from: `"Lost & Found" <${process.env.EMAIL_USER}>`,
         to: matched.email,
-        subject: "We Found a Possible Match for Your Found Item!",
+        subject: "We Found a Possible text based Match for Your Found Item!",
         html: `
           <div style="font-family: Arial, sans-serif; padding: 10px;">
             <h2 style="color: #333;">🎉 We Found a Possible Match!</h2>
@@ -175,19 +186,114 @@ export async function POST(req: Request) {
             
             <h3>${item.title}</h3>
             <p>${item.description}</p>
-            ${item.imageUrl ? `<img src="${item.imageUrl}" alt="Item image" style="max-width: 200px; height: auto; border-radius: 5px; margin-top: 10px;">` : ''}
+            ${
+              item.imageUrl
+                ? `<img src="${item.imageUrl}" alt="Item image" style="max-width: 200px; height: auto; border-radius: 5px; margin-top: 10px;">`
+                : ""
+            }
             
             <p><b>Location:</b> ${item.location}</p>
-            <p><b>Date Reported:</b> ${new Date(item.createdAt).toLocaleDateString()}</p>
+            <p><b>Date Reported:</b> ${new Date(
+              item.createdAt
+            ).toLocaleDateString()}</p>
       
-            <a href="${siteUrl}/items/${item.id}" style="display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+            <a href="${siteUrl}/items/${
+          item.id
+        }" style="display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
               View Matched Item
             </a>
           </div>
         `,
-      })
+      });
     }
-        
+
+    const imageMatchResponse = await fetch(
+      `${process.env.IMAGE_MATCH_API}/image-match`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          new_item: { id: item.id, image_url: item.imageUrl },
+          existing_items: existingItems.map((i) => ({
+            id: i.id,
+            title: i.title,
+            description: i.description,
+            email: i.user.email,
+            image_url: i.imageUrl,
+            location: i.location,
+            createdAt: i.createdAt
+          })),
+        }),
+      }
+    );
+
+    const imageMatchResult = await imageMatchResponse.json();
+    console.log(imageMatchResult);
+    if (imageMatchResult.match_found) {
+      const matched = imageMatchResult.matched_item;
+      const siteUrl = process.env.SITE_URL || "http://localhost:3000";
+      await transporter.sendMail({
+        from: `"Lost & Found" <${process.env.EMAIL_USER}>`,
+        to: session.user.email!,
+        subject: "We Found a Possible Image based Match for Your Lost Item!",
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 10px;">
+            <h2 style="color: #333;">🎉 We Found a Possible Match!</h2>
+            <p>Your reported item matches with the following:</p>
+            
+            <h3>${matched.title}</h3>
+            <p>${matched.description}</p>
+            ${
+              matched.imageUrl
+                ? `<img src="${matched.imageUrl}" alt="Item image" style="max-width: 200px; height: auto; border-radius: 5px; margin-top: 10px;">`
+                : ""
+            }
+            
+            <p><b>Location:</b> ${matched.location}</p>
+            <p><b>Date Reported:</b> ${new Date(
+              matched.createdAt
+            ).toLocaleDateString()}</p>
+      
+            <a href="${siteUrl}/items/${
+          matched.id
+        }" style="display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+              View Matched Item
+            </a>
+          </div>
+        `,
+      });
+
+      await transporter.sendMail({
+        from: `"Lost & Found" <${process.env.EMAIL_USER}>`,
+        to: matched.email,
+        subject: "We Found a Possible Image based Match for Your Found Item!",
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 10px;">
+            <h2 style="color: #333;">🎉 We Found a Possible Match!</h2>
+            <p>Your reported item matches with the following:</p>
+            
+            <h3>${item.title}</h3>
+            <p>${item.description}</p>
+            ${
+              item.imageUrl
+                ? `<img src="${item.imageUrl}" alt="Item image" style="max-width: 200px; height: auto; border-radius: 5px; margin-top: 10px;">`
+                : ""
+            }
+            
+            <p><b>Location:</b> ${item.location}</p>
+            <p><b>Date Reported:</b> ${new Date(
+              item.createdAt
+            ).toLocaleDateString()}</p>
+      
+            <a href="${siteUrl}/items/${
+          item.id
+        }" style="display: inline-block; margin-top: 15px; padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+              View Matched Item
+            </a>
+          </div>
+        `,
+      });
+    }
 
     // Trigger real-time notification
     // await pusherServer.trigger("items", "new-item", {
@@ -200,6 +306,6 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { message: "Error creating item" },
       { status: 500 }
-    );                     
+    );
   }
 }

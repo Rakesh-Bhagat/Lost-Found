@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { formatDistanceToNow, format } from "date-fns"
 import { Button } from "@/components/ui/button"
@@ -31,10 +31,11 @@ export default function ItemDetailsPage({ params }: { params: { id: string } }) 
   const [isDeleting, setIsDeleting] = useState(false)
   const [isResolving, setIsResolving] = useState(false)
 
-  useEffect(() => {
+  
     async function fetchItem() {
       try {
-        const response = await fetch(`/api/items/${params.id}`)
+        const {id} = useParams()
+        const response = await fetch(`/api/items/${id}`)
         if (!response.ok) {
           throw new Error("Item not found")
         }
@@ -48,7 +49,7 @@ export default function ItemDetailsPage({ params }: { params: { id: string } }) 
     }
 
     fetchItem()
-  }, [params.id])
+  
 
   const isOwner = session?.user?.id === item?.userId
 
